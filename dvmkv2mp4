@@ -96,7 +96,8 @@ for f in *.mkv; do
   ffstarthdr10plus="$ionc ffmpeg -i \"$input\" -y -loglevel error -stats -map 0:v:0 -c:v copy -vbsf hevc_mp4toannexb -f hevc BL.hevc -map 0:v:0 -c:v copy -vbsf hevc_mp4toannexb -f hevc -"
   #ffendhdr10plus="| $ionc hdr10plus_tool extract -o hdr10plus_metadata.json -"
   dv=$(mediainfo "$input" | grep 'HDR format.*Dolby Vision')
-  hdr10plus=$(mediainfo "$input" | grep 'HDR format.*HDR10+')
+  hdr10plus=$(mediainfo "$input" | grep -E 'HDR format.*(HDR10+|HDR10)')
+  #hdr10=$(mediainfo "$input" | grep -E 'HDR format.*(HDR10)')
   output=$(echo "$input" | $sed 's/\ DV.mkv\|\ HDR10+.mkv\|\ HDR.mkv/.mkv/g' | $sed s/\.mkv/\ DV-MP4\.mkv/g)
   output="${output%.mkv}"
 
