@@ -318,7 +318,6 @@ EOF
       rm BL.hevc *DV-MP4.asm *DV-MP4.*.srt *DV-MP4.sup ${input}.dvconverting
       continue
     fi
-  fi
   elif [ ! -z "$hdr10" ]; then
     ### PROCESS SUBS
     processsubs
