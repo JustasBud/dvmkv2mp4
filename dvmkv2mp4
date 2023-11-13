@@ -183,7 +183,7 @@ EOF
   else
     echo "$as" > tracks.list
   fi
-  ts=$(ffprobe -loglevel error -select_streams s -show_entries stream=type:stream=codec_name:stream=index:stream=start_pts:stream_tags=language:stream_tags=title -of csv=p=0 "$input" | grep $(echo $LANGS | $sed 's/,/,\\|,/g') | $sed 's/,/\|/g')
+  ts=$(ffprobe -loglevel error -select_streams s -show_entries stream=type:stream=codec_name:stream=index:stream=start_pts:stream_tags=language:stream_tags=title -of csv=p=0 "$input" | grep "$(echo $LANGS | $sed 's/,/,\\|,/g')" | $sed 's/,/\|/g')
   if [ "$ts" == "" ]; then
     ffprobe -loglevel error -select_streams s -show_entries stream=type:stream=codec_name:stream=index:stream=start_pts:stream_tags=language:stream_tags=title -of csv=p=0 "$input" | $sed 's/,/\|/g' >> tracks.list
   else
@@ -303,9 +303,47 @@ EOF
         cp "$i" "$(echo "$i" | $sed 's/\ DV-MP4//g' | $sed "s/.*\.\(.*\)\.\(s..\)/\\.\1\.\2/g")"
       done
       rm BL.hevc *DV-MP4.asm *DV-MP4.*.srt *DV-MP4.sup "${input}.dvconverting"
-      # Removed continue statement; replace with appropriate control flow if needed
+      continue
     fi
+
+  elif [ ! -z "$hdr10plus" ]; then
+    # HANDLE HDR10+ METADATA
+    ffstring+=("$ffendhdr10plus")
+    echo ${ffstring[*]}
+    eval ${ffstring[*]}
+
+    ### PROCESS SUBS
+    processsubs
+
+    ### VERIFY HDR10+ METADATA
+    if [ -z "$FrameCount" ]; then
+    echo "Error: FrameCount is not set."
+    exit 1
+    fi
+
+    MetadataCount=$(jq -r '.SceneInfo | length' hdr10plus_metadata.json)
+    MetadataPercent=$(bc <<< "scale=2; $MetadataCount/$FrameCount * 100")
+    MetadataPercent=${MetadataPercent%.*}
+    if [ "${MetadataPercent%.*}" -gt 95 ]; then 
+      echo "Metadata seems ok proceeding"      
+      $ionc dovi_tool generate -j extra.json --hdr10plus-json hdr10plus_metadata.json -o RPU.bin
+      $ionc dovi_tool inject-rpu -i BL.hevc --rpu-in RPU.bin -o BL_RPU.hevc
+      rm BL.hevc
+    else 
+      echo "Invalid HDR10+ Metadata ABORTING"
+      echo "HDR10+ Metadata Frames: $MetadataCount VideoFrames: $FrameCount  $MetadataPercent%"
+      echo "Preserving extracted subs"
+      inputbase=${input%.mkv}
+      dvmp4sub=`echo ${input%.mkv} | $sed 's/\ DV\|\ HDR10+//g'`
+      for i in "$dvmp4sub"\ DV-MP4.*.{srt,sup}; do 
+          eval "cp \"$i\" \"`echo "$i" | $sed 's/\ DV-MP4//g' | $sed \"s/.*\.\(.*\)\.\(s..\)/\$inputbase\.\1\.\2/g\"`\"";
+      done
+      rm BL.hevc *DV-MP4.asm *DV-MP4.*.srt *DV-MP4.sup ${input}.dvconverting
+      continue
+    fi
+
   fi
+  
 
   ### GRAB CHAPTERS
   mkvextract chapters -s "${input}" > chapters.list
