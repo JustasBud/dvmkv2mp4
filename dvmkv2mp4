@@ -130,7 +130,7 @@ for f in *.mkv; do
       else
         dv_target=8.hdr10
       fi
-    elif [ ! -z "$hdr10plus" ]; then
+    elif [ ! -z "$hdr10plus" ] || [ ! -z "$hdr10" ]; then
       echo "Converting HDR10+ to DV8: \"$input\""
       dv_target=8.hdr10
       ffstring=("$ffstarthdr10plus")
@@ -293,10 +293,15 @@ EOF
     processsubs
 
     ### VERIFY HDR10+ METADATA
-    MetadataCount=`cat hdr10plus_metadata.json | jq -r '.SceneInfo | length'`
-    MetadataPercent=`bc <<< "scale=2; $MetadataCount/$FrameCount * 100"`
+    if [ -z "$FrameCount" ]; then
+    echo "Error: FrameCount is not set."
+    exit 1
+    fi
+
+    MetadataCount=$(jq -r '.SceneInfo | length' hdr10plus_metadata.json)
+    MetadataPercent=$(bc <<< "scale=2; $MetadataCount/$FrameCount * 100")
     MetadataPercent=${MetadataPercent%.*}
-    if [ "$MetadataPercent" -gt 95 ]; then 
+    if [ "${MetadataPercent%.*}" -gt 95 ]; then 
       echo "Metadata seems ok proceeding"      
       $ionc dovi_tool generate -j extra.json --hdr10plus-json hdr10plus_metadata.json -o RPU.bin
       $ionc dovi_tool inject-rpu -i BL.hevc --rpu-in RPU.bin -o BL_RPU.hevc
@@ -317,25 +322,25 @@ EOF
   elif [ ! -z "$hdr10" ]; then
     ### PROCESS SUBS
     processsubs
+  
     if [ -f "${input}.bin" ]; then
-      echo "madVR HDR measurement file seems ok, proceeding"      
-      $ionc dovi_tool generate -j extra.json --madvr-file ${input}.bin -o RPU.bin
-      #$ionc dovi_tool.exe inject-rpu -i ${input}.mkv --rpu-in RPU_from_madVR.bin -o ${input}_injected.mkv
-      $ionc dovi_tool inject-rpu -i BL.hevc --rpu-in RPU.bin -o BL_RPU.hevc
+      echo "madVR HDR measurement file seems ok, proceeding"
+      "$ionc" dovi_tool generate -j extra.json --madvr-file "${input}.bin" -o RPU.bin
+      #"$ionc" dovi_tool.exe inject-rpu -i "${input}.mkv" --rpu-in RPU_from_madVR.bin -o "${input}_injected.mkv"
+      "$ionc" dovi_tool inject-rpu -i BL.hevc --rpu-in RPU.bin -o BL_RPU.hevc
       rm BL.hevc
     else
       echo "${input}.bin does not exist, aborting. Please generate it with madMeasureHDRDynamicOptimizer.exe. Remember to rename *.measurement to *.bin"
       echo "Preserving extracted subs"
       inputbase=${input%.mkv}
-      dvmp4sub=`echo ${input%.mkv} | $sed 's/\ DV\|\ HDR10+//g'`
-      for i in "$dvmp4sub"\ DV-MP4.*.{srt,sup}; do 
-          eval "cp \"$i\" \"`echo "$i" | $sed 's/\ DV-MP4//g' | $sed \"s/.*\.\(.*\)\.\(s..\)/\$inputbase\.\1\.\2/g\"`\"";
+      dvmp4sub=$(echo "${input%.mkv}" | $sed 's/\ DV\|\ HDR10+//g')
+      for i in "$dvmp4sub" DV-MP4.*.{srt,sup}; do 
+        cp "$i" "$(echo "$i" | $sed 's/\ DV-MP4//g' | $sed "s/.*\.\(.*\)\.\(s..\)/\\.\1\.\2/g")"
       done
-      rm BL.hevc *DV-MP4.asm *DV-MP4.*.srt *DV-MP4.sup ${input}.dvconverting
-      continue
+      rm BL.hevc *DV-MP4.asm *DV-MP4.*.srt *DV-MP4.sup "${input}.dvconverting"
+      # Removed continue statement; replace with appropriate control flow if needed
     fi
-  fi
-
+  
 
   ### GRAB CHAPTERS
   mkvextract chapters -s "${input}" > chapters.list
