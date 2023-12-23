@@ -3,9 +3,9 @@
 This fork works with newest Gpac / MP4Box 2.2.x. Similiarly all other depencies have been updated & tested.
 - Removed PGS2SRT functionality
 - After testing I can confirm that with LG OLED C9 the following audio codecs works with Plex:
-  DTS and DTS-HD MA 5.1/7.1 passthrough. So these are left alone and copied as they are.
-  DDP 7.1 passthrough. Some testing
-  DTS:X and TrueHD are not being passthroughed, so they are being converted. Still deciding on what is the best form, so WIP
+--  DTS and DTS-HD MA 5.1/7.1 passthrough. So these are left alone and copied as they are.
+--  DDP 7.1 passthrough. Some more testing needed, but mostly works.
+--  DTS:X and TrueHD are not being passthroughed, so they are being converted. Still deciding on what is the best form, so WIP
 - Trying to work out a way to convert HDR10 to Dolby Vision, maybe with MadVR's HDRMeasure Windows app. Looking for something that works on Linux, though
 
 ## Build Docker image
