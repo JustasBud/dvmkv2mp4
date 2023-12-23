@@ -1,9 +1,12 @@
 # dvmkv2mp4 - Convert any Dolby Vision/HDR10+ MKV to MP4 that runs on many devices
 
-This fork works with newest Gpac / MP4Box 2.2.x.
+This fork works with newest Gpac / MP4Box 2.2.x. Similiarly all other depencies have been updated & tested.
 - Removed PGS2SRT functionality
-- All sound tracks are copied as they are. Added newer Dolby Atmos logic and TrueHD copying with Dolby Atmos data. While you still need external device to have TrueHD you can let LG OLED to convert it to DD+ with spatial data, presumably (still testing).
-- Same goes for DTS and DTS-HD 
+- After testing I can confirm that with LG OLED C9 the following audio codecs works with Plex:
+  DTS and DTS-HD MA 5.1/7.1 passthrough. So these are left alone and copied as they are.
+  DDP 7.1 passthrough. Some testing
+  DTS:X and TrueHD are not being passthroughed, so they are being converted. Still deciding on what is the best form, so WIP
+- Trying to work out a way to convert HDR10 to Dolby Vision, maybe with MadVR's HDRMeasure Windows app. Looking for something that works on Linux, though
 
 ## Build Docker image
 Currently the image works only on x64 Linux. Also note that the final image size will be close to 6 GB which is normal as it includes the Tesseract OCR models.
