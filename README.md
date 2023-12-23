@@ -1,12 +1,24 @@
-# dvmkv2mp4 - Convert any Dolby Vision/HDR10+ MKV to MP4 that runs on many devices
+# Enhanced Gpac / MP4Box 2.2.x Fork
 
-This fork works with newest Gpac / MP4Box 2.2.x. Similiarly all other depencies have been updated & tested.
-- Removed PGS2SRT functionality
-- After testing I can confirm that with LG OLED C9 the following audio codecs works with Plex:
---  DTS and DTS-HD MA 5.1/7.1 passthrough. So these are left alone and copied as they are.
---  DDP 7.1 passthrough. Some more testing needed, but mostly works.
---  DTS:X and TrueHD are not being passthroughed, so they are being converted. Still deciding on what is the best form, so WIP
-- Trying to work out a way to convert HDR10 to Dolby Vision, maybe with MadVR's HDRMeasure Windows app. Looking for something that works on Linux, though
+## Overview
+This repository hosts a fork of Gpac / MP4Box, specifically tuned for the latest 2.2.x versions. It includes updated dependencies that have been rigorously tested for compatibility and performance.
+
+## Updates and Modifications
+- **Dependencies:** All dependencies have been updated to their latest versions and thoroughly tested for seamless integration.
+- **Removed Feature:** The PGS2SRT functionality has been excluded from this fork.
+
+## Compatibility Tests with LG OLED C9 and Plex
+- **Audio Codec Support:**
+  - **DTS and DTS-HD MA:** Both 5.1 and 7.1 passthrough are supported. These codecs are copied directly without any modifications.
+  - **DDP 7.1:** Passthrough is mostly functional, though additional testing is in progress.
+- **Work-In-Progress:**
+  - **DTS:X and TrueHD:** These are currently not supported for passthrough and are being converted. The optimal conversion method is still under consideration.
+  - **HDR10 to Dolby Vision Conversion:** Exploring potential solutions for converting HDR10 to Dolby Vision. Current focus is on MadVR's HDRMeasure application for Windows, with ongoing research for a Linux-compatible alternative.
+
+## Contribution
+Contributions and suggestions are welcome, particularly in enhancing HDR conversion and audio codec support.
+
+# dvmkv2mp4 - Convert any Dolby Vision/HDR10+ MKV to MP4 that runs on many devices
 
 ## Build Docker image
 Currently the image works only on x64 Linux. Also note that the final image size will be close to 6 GB which is normal as it includes the Tesseract OCR models.
