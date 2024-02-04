@@ -61,10 +61,14 @@ done
 
 function cleanup {
   # Use an array of known temporary files and check for their existence before removing
-  local temp_files=(RPU.bin extra.json hdr10plus_metadata.json audio.exports sub.exports tracks.list chapters.list BL*hevc "${input}.dvconverting")
+  local temp_files=(tmp RPU.bin extra.json hdr10plus_metadata.json audio.exports sub.exports tracks.list chapters.list BL*hevc "${input}.dvconverting")
   for file in "${temp_files[@]}"; do
-    [[ -f "$file" ]] && rm "$file"
+    [[ -f "$file" ]] && rm -r "$file"
   done
+  rm *.eac3
+  if [ $ADDSUBS == "yes" ]; then
+    rm *DV-MP4.*.srt
+  fi
   if [ "$REMOVESOURCE" == "yes" ]; then
     [[ -f "${input}" ]] && rm "${input}"
   fi
