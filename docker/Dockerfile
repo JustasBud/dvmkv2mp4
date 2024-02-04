@@ -62,7 +62,7 @@ RUN \
 
 RUN \
   printf "\n---Create \"convert\" directory for volume attachment---\n\n" && \
-  mkdir /convert
+  mkdir /convert /.gpac && chmod 777 /.gpac
 
 VOLUME ["/convert"]
 
