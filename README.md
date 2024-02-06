@@ -1,7 +1,7 @@
 # Enhanced Gpac / MP4Box 2.2.x Fork
 
 ## Overview
-This repository hosts a fork of Gpac / MP4Box, specifically tuned for LG OLED C9 and, latest Gpac / Mp4box 2.2.x versions and ffmpeg 6.x.
+This repository hosts a fork of dvmkv2mp4 specifically tuned for LG OLED C9, latest Gpac / Mp4box 2.2.x versions and ffmpeg 6.x.
 
 ## Updates and Modifications
 - **Dependencies:** All dependencies have been updated to their latest versions and thoroughly tested for seamless integration.
