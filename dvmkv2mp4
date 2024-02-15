@@ -68,7 +68,7 @@ function cleanup {
   rm -rf tmp
   rm *.eac3
   if [ $ADDSUBS == "yes" ]; then
-    rm *DV-MP4.*.srt
+    rm *.*.srt
   fi
   if [ "$REMOVESOURCE" == "yes" ]; then
     [[ -f "${input}" ]] && rm "${input}"
@@ -399,7 +399,7 @@ EOF
   if [ -s "chapters.list" ]; then
     mp4string+=("-chap chapters.list")
   fi
-  mp4string+=("-tmp ./tmp -brand mp42isom -ab dby1 -no-iod -enable 1 \"$output.mp4\"")
+  mp4string+=("-tmp ./tmp -brand mp42isom -ab dby1 -no-iod -enable 1 \"${output/ DV-MP4/}.mp4\"")
   echo "${mp4string[*]}"
   eval "${mp4string[*]}"
   if [ $DEBUG != "yes" ]; then
