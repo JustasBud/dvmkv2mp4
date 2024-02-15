@@ -68,7 +68,7 @@ function cleanup {
   rm -rf tmp
   rm *.eac3
   if [ $ADDSUBS == "yes" ]; then
-    rm *.*.srt
+    rm *DV-MP4.*.srt
   fi
   if [ "$REMOVESOURCE" == "yes" ]; then
     [[ -f "${input}" ]] && rm "${input}"
