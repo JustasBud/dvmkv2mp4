@@ -403,7 +403,7 @@ EOF
   mp4string+=("-tmp ./tmp -brand mp42isom -ab dby1 \"${output/ DV-MP4/}.mp4\"")
   echo "${mp4string[*]}"
   eval "${mp4string[*]}"
-  if [ $DEBUG != "no" ]; then
+  if [ $DEBUG != "yes" ]; then
     cleanup
   else
     rm "${input}.dvconverting"
