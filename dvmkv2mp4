@@ -115,7 +115,8 @@ for f in *.mkv;do
   hdr10plus=$(mediainfo "$input" | grep 'HDR format.*HDR10+')
   output=`echo "$input" | $sed 's/\ DV.mkv\|\ HDR10+.mkv\|\ HDR.mkv/.mkv/g' | $sed s/\.mkv/\ DV-MP4\.mkv/g`
   output="${output%.mkv}"
-
+  fps="`ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=nw=1:nk=1 "$input"`"
+  
   ## AUTODETECT SOURCE TYPE AND CONSTRUCT FFMPEG
   if [ -z "$hdr10plus" ] && [ -z "$dv" ] || [ -f "${input}.dvconverting" ]; then
     echo "Not an HDR10+ nor DV source or already converting"
@@ -303,7 +304,7 @@ EOF
     MetadataCount=`cat hdr10plus_metadata.json | jq -r '.SceneInfo | length'`
     MetadataPercent=`bc <<< "scale=2; $MetadataCount/$FrameCount * 100"`
     MetadataPercent=${MetadataPercent%.*}
-    if [ "$MetadataPercent" -gt 95 ]; then 
+    if [ "$MetadataPercent" -ge 95 ]; then 
       echo "Metadata seems ok proceeding"
       $ionc dovi_tool generate -j extra.json --hdr10plus-json hdr10plus_metadata.json -o RPU.bin
       $ionc dovi_tool inject-rpu -i BL.hevc --rpu-in RPU.bin -o BL_RPU.hevc
@@ -327,7 +328,7 @@ EOF
   mkvextract chapters -s "${input}" > chapters.list
   
   ### MUX MP4
-  mp4string=("$ionc MP4Box -add BL_RPU.hevc:dv-profile=$dv_target")
+  mp4string=("$ionc MP4Box -add BL_RPU.hevc:dv-profile=${dv_target}:fps=${fps}")
   tcount=2
   while read i;do
     stream=`echo "$i" | cut -f1 -d\|`
