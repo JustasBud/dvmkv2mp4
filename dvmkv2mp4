@@ -401,7 +401,7 @@ EOF
   if [ -s "chapters.list" ]; then
     mp4string+=("-chap chapters.list")
   fi
-  mp4string+=("-tmp ./tmp -brand mp42isom -ab -tags comment=\"${created_tag}\" -new \"$output.mp4\"")
+  mp4string+=("-tmp ./tmp -brand mp42isom -ab dby1 -tags comment=\"${created_tag}\" -new \"$output.mp4\"")
 # mp4string+=("-tmp \"${TEMP_DIR}\" -brand mp42isom -ab dby1 -tags comment=\"${created_tag}\" -new \"$output.mp4\"")
   echo "${mp4string[*]}"
   eval "${mp4string[*]}"
