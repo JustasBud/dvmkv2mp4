@@ -70,7 +70,16 @@ function cleanup {
   if [ $ADDSUBS == "yes" ]; then
     rm *DV-MP4.*.srt
   fi
-  if [ "$REMOVESOURCE" == "yes" ]; then
+
+
+  
+    input_size=$(stat -c %s "$input")
+    output_size=$(stat -c %s "$output.mp4")
+
+    # Calculate the size difference percentage
+    size_diff_percentage=$(( (input_size - output_size) * 100 / input_size ))
+    size_diff_percentage=${size_diff_percentage#-} # Convert to absolute value
+  if [ "$REMOVESOURCE" == "yes" ] && [ "$size_diff_percentage" -le 30 ]; then #30% of original source file as sometimes script cleans up source mkv file even when mp4 has failed to generate then
     [[ -f "${input}" ]] && rm "${input}"
   fi
 }
